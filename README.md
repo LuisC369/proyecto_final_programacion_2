@@ -14,7 +14,7 @@ aplicación Android para consultar el saldo de puntos.
 
 | Nombre | Carné | Usuario GitHub |
 |---|---|---|
-| Pendiente | Pendiente | [@LuisC369](https://github.com/LuisC369) |
+| Luis Pablo de Jesus Lopez Carrera | 7690-26-6662 | [@LuisC369](https://github.com/LuisC369) |
 | Pendiente | Pendiente | Pendiente |
 | Pendiente | Pendiente | Pendiente |
 
