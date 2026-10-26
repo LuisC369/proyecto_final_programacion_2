@@ -16,7 +16,7 @@ aplicación Android para consultar el saldo de puntos.
 |---|---|---|
 | Luis Pablo de Jesus Lopez Carrera | 7690-26-6662 | [@LuisC369](https://github.com/LuisC369) |
 | Bryan Alejandro Osoy Monterroso| 7690-25-15671 | [@bosoym-coder](https://github.com/bosoym-coder) | 
-| Pendiente | Pendiente | Pendiente |
+| Eliezer Isaí Vicente Vicente | 7690-24-7527 | [@isai-tech](https://github.com/isai-tech) |
 
 ## Tecnologías
 
