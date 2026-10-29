@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${cliente.id == 0 ? 'Nuevo cliente' : 'Editar cliente'})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('clientes')}"></nav>
+<main class="container pb-5" style="max-width: 720px">
+    <h1 class="h3 mb-4" th:text="${cliente.id == 0} ? 'Nuevo cliente' : 'Editar cliente'">Cliente</h1>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <form class="card card-body" th:action="@{/clientes/guardar}" th:object="${cliente}" method="post">
+        <input type="hidden" th:field="*{id}">
+        <div class="row g-3">
+            <div class="col-12">
+                <label class="form-label" for="identificador">Identificador (DPI / NIT) *</label>
+                <input class="form-control" th:field="*{identificador}" maxlength="20" required>
+                <div class="form-text">Con este dato el cliente consulta sus puntos en la app.</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="nombre">Nombre *</label>
+                <input class="form-control" th:field="*{nombre}" maxlength="60" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="apellido">Apellido *</label>
+                <input class="form-control" th:field="*{apellido}" maxlength="60" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="telefono">Teléfono</label>
+                <input class="form-control" th:field="*{telefono}" maxlength="15">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="email">Correo</label>
+                <input type="email" class="form-control" th:field="*{email}" maxlength="100">
+            </div>
+        </div>
+        <div class="d-flex gap-2 justify-content-end mt-4">
+            <a th:href="@{/clientes}" class="btn btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Guardar</button>
+        </div>
+    </form>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

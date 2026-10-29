@@ -1,0 +1,110 @@
+:root {
+    --cafe: #5b3420;
+    --tostado: #c8792b;
+    --tostado-oscuro: #a9631f;
+    --mostaza: #e8a33d;
+    --crema: #fff8ef;
+    --bs-body-font-family: "Poppins", sans-serif;
+    --bs-body-color: #2e2018;
+    --bs-link-color-rgb: 169, 99, 31;
+    --bs-link-hover-color-rgb: 91, 52, 32;
+}
+
+body {
+    background: var(--crema);
+}
+
+.navbar, .sidebar .offcanvas-lg {
+    background: var(--cafe);
+    --bs-offcanvas-width: 250px;
+}
+
+.sidebar .nav-link {
+    color: rgba(255, 255, 255, .75);
+    border-radius: .5rem;
+}
+
+.sidebar .nav-link:hover, .sidebar .nav-link.active {
+    color: #fff;
+    background: rgba(255, 255, 255, .12);
+}
+
+.sidebar .bi {
+    margin-right: .4rem;
+}
+
+@media (min-width: 992px) {
+    body {
+        padding: 1.5rem 0 0 250px;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 250px;
+        background: var(--cafe);
+        overflow-y: auto;
+    }
+
+    .sidebar .offcanvas-body {
+        min-height: 100%;
+    }
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--tostado);
+    --bs-btn-border-color: var(--tostado);
+    --bs-btn-hover-bg: var(--tostado-oscuro);
+    --bs-btn-hover-border-color: var(--tostado-oscuro);
+    --bs-btn-active-bg: var(--cafe);
+    --bs-btn-active-border-color: var(--cafe);
+    --bs-btn-disabled-bg: var(--tostado);
+    --bs-btn-disabled-border-color: var(--tostado);
+}
+
+.nav-pills {
+    --bs-nav-pills-link-active-bg: var(--tostado);
+    --bs-nav-link-color: var(--cafe);
+    --bs-nav-link-hover-color: var(--tostado-oscuro);
+}
+
+.card {
+    border: 0;
+    border-radius: 1rem;
+    box-shadow: 0 2px 12px rgba(91, 52, 32, .08);
+}
+
+.table th {
+    font-size: .8rem;
+    text-transform: uppercase;
+    color: #7b6b5e;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--mostaza);
+    box-shadow: 0 0 0 .2rem rgba(232, 163, 61, .25);
+}
+
+.puntos {
+    background: #fdf0d8;
+    color: #8a5a12;
+    white-space: nowrap;
+}
+
+.cifra {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--tostado);
+}
+
+@media print {
+    .navbar, .sidebar, .no-imprimir {
+        display: none !important;
+    }
+
+    body {
+        padding: 0;
+    }
+}

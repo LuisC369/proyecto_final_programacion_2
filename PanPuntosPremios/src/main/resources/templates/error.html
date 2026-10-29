@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Error')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('')}"></nav>
+<main class="container pb-5">
+    <div class="card card-body text-center py-5">
+        <i class="bi bi-exclamation-circle fs-1 text-danger"></i>
+        <h1 class="h4 mt-2" th:text="${titulo != null} ? ${titulo} : 'Algo salió mal'">Algo salió mal</h1>
+        <p class="text-secondary" th:text="${mensaje != null} ? ${mensaje} : 'La página solicitada no está disponible.'">Mensaje</p>
+        <p class="small text-secondary" th:if="${detalle}">
+            <code th:text="${detalle}">detalle</code><br>
+            Verifique que MySQL esté encendido y que exista la base de datos <strong>pan_puntos_premios</strong>.
+        </p>
+        <div><a th:href="@{/}" class="btn btn-primary"><i class="bi bi-house"></i> Volver al inicio</a></div>
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
