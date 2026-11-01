@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Reportes')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('reportes')}"></nav>
+<main class="container pb-5" style="max-width: 820px">
+    <h1 class="h3 mb-4">Reportes en PDF</h1>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <form class="card card-body" method="get" target="_blank">
+        <div class="row g-3 mb-3">
+            <div class="col-6">
+                <label class="form-label" for="desde">Desde</label>
+                <input type="date" class="form-control" id="desde" name="desde" th:value="${desde}">
+            </div>
+            <div class="col-6">
+                <label class="form-label" for="hasta">Hasta</label>
+                <input type="date" class="form-control" id="hasta" name="hasta" th:value="${hasta}">
+            </div>
+        </div>
+        <p class="small text-secondary">Las fechas aplican a los reportes marcados con <i class="bi bi-calendar"></i>.</p>
+
+        <div class="list-group">
+            <button type="submit" class="list-group-item list-group-item-action" th:formaction="@{/reportes/puntos}">
+                Puntos acumulados por cliente</button>
+        </div>
+    </form>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
