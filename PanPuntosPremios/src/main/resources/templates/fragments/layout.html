@@ -29,9 +29,10 @@
                     <i class="bi bi-basket2-fill fs-3"></i> Pan, Puntos y Premios
                 </a>
                 <nav class="nav flex-column gap-1">
-                    <a class="nav-link" th:classappend="${activo == 'inicio'} ? 'active'" th:href="@{/}"><i class="bi bi-house"></i> Inicio</a>
-                    <a class="nav-link" th:classappend="${activo == 'clientes'} ? 'active'" th:href="@{/clientes}"><i class="bi bi-people"></i> Clientes</a>
-                </nav>
+    <a class="nav-link" th:classappend="${activo == 'inicio'} ? 'active'" th:href="@{/}"><i class="bi bi-house"></i> Inicio</a>
+    <a class="nav-link" th:classappend="${activo == 'clientes'} ? 'active'" th:href="@{/clientes}"><i class="bi bi-people"></i> Clientes</a>
+    <a class="nav-link" th:classappend="${activo == 'productos'} ? 'active'" th:href="@{/productos}"><i class="bi bi-basket2"></i> Productos</a>
+</nav>
                 <small class="text-white-50 mt-auto pt-4">Programación II · UMG</small>
             </div>
         </aside>

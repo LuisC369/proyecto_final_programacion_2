@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Productos')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('productos')}"></nav>
+<main class="container pb-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <h1 class="h3 mb-0">Productos</h1>
+        <div class="d-flex gap-2">
+            <a th:href="@{/productos/nuevo(categoria='MENU')}" class="btn btn-outline-secondary"><i class="bi bi-box2-heart"></i> Nuevo menú</a>
+            <a th:href="@{/productos/nuevo(categoria='SANDWICH')}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Nuevo producto</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <ul class="nav nav-pills mb-3">
+        <li class="nav-item"><a class="nav-link" th:classappend="${categoriaActual == null} ? 'active'" th:href="@{/productos}">Todos</a></li>
+        <li class="nav-item" th:each="cat : ${categorias}">
+            <a class="nav-link" th:classappend="${categoriaActual == cat} ? 'active'" th:href="@{/productos(categoria=${cat})}" th:text="${cat.plural}"></a>
+        </li>
+    </ul>
+
+    <div class="card card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead><tr><th>Código</th><th>Producto</th><th>Categoría</th><th class="text-end">Precio</th><th>Disponibles</th><th>Estado</th><th></th></tr></thead>
+                <tbody>
+                <tr th:each="p : ${productos}">
+                    <td th:text="${p.codigo}">S001</td>
+                    <td>
+                        <span th:text="${p.nombre}">Producto</span>
+                        <small class="text-secondary d-block" th:if="${p.menu}" th:text="${p.descripcionComponentes}"></small>
+                    </td>
+                    <td th:text="${p.categoria.etiqueta}">Categoría</td>
+                    <td class="text-end" th:text="${'Q ' + #numbers.formatDecimal(p.precio, 1, 'COMMA', 2, 'POINT')}">Q 0.00</td>
+                    <td><span class="badge" th:classappend="${p.agotado} ? 'text-bg-danger' : (${p.bajoInventario} ? 'text-bg-warning' : 'text-bg-light')"
+                              th:text="${p.disponibles}">0</span></td>
+                    <td><span class="badge" th:classappend="${p.activo} ? 'text-bg-success' : 'text-bg-secondary'"
+                              th:text="${p.activo} ? 'Activo' : 'Inactivo'">Activo</span></td>
+                    <td class="text-end text-nowrap">
+                        <a th:href="@{/productos/{id}/editar(id=${p.id})}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i> Editar</a>
+                        <form class="d-inline" th:action="@{/productos/{id}/estado(id=${p.id})}" method="post"
+                              th:attr="data-confirmar=${p.activo} ? '¿Desactivar este producto?' : '¿Activar este producto?'">
+                            <input type="hidden" name="activo" th:value="${!p.activo}">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary" th:text="${p.activo} ? 'Desactivar' : 'Activar'"></button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(productos)}"><td colspan="7" class="text-secondary">No hay productos.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <p class="small text-secondary mt-2">Los disponibles de un menú se calculan con la existencia de sus tres componentes.</p>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

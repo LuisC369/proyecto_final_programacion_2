@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${producto.nuevo ? 'Nuevo producto' : 'Editar producto'})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('productos')}"></nav>
+<main class="container pb-5" style="max-width: 720px">
+    <h1 class="h3 mb-4" th:text="${producto.nuevo} ? 'Nuevo producto' : 'Editar producto'">Producto</h1>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <form class="card card-body" th:action="@{/productos/guardar}" th:object="${producto}" method="post">
+        <input type="hidden" th:field="*{id}">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label" for="categoria">Categoría *</label>
+                <select class="form-select" th:field="*{categoria}" th:disabled="${!producto.nuevo}" id="categoria">
+                    <option th:each="cat : ${categorias}" th:value="${cat}" th:text="${cat.etiqueta}">Categoría</option>
+                </select>
+                <input th:if="${!producto.nuevo}" type="hidden" name="categoria" th:value="*{categoria}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="codigo">Código *</label>
+                <input class="form-control text-uppercase" th:field="*{codigo}" maxlength="10" required placeholder="Ej. S006">
+            </div>
+            <div class="col-12">
+                <label class="form-label" for="nombre">Nombre *</label>
+                <input class="form-control" th:field="*{nombre}" maxlength="80" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="precio">Precio (Q) *</label>
+                <input type="number" class="form-control" th:field="*{precio}" min="0" step="0.01" required>
+            </div>
+            <div class="col-md-6" id="bloque-existencia">
+                <label class="form-label" for="existencia">Existencia inicial</label>
+                <input type="number" class="form-control" th:field="*{existencia}" min="0" step="1" th:readonly="${!producto.nuevo}">
+                <div class="form-text" th:if="${!producto.nuevo}">Para agregar unidades use Inventario.</div>
+            </div>
+        </div>
+
+        <div class="row g-3 mt-1" id="bloque-menu">
+            <div class="col-12"><h2 class="h6 mb-0">Componentes del menú</h2></div>
+            <div class="col-md-4">
+                <label class="form-label" for="idSandwich">Sándwich</label>
+                <select class="form-select" th:field="*{idSandwich}">
+                    <option value="">Seleccione…</option>
+                    <option th:each="s : ${sandwiches}" th:value="${s.id}" th:text="${s.nombre}"></option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label" for="idBebida">Bebida</label>
+                <select class="form-select" th:field="*{idBebida}">
+                    <option value="">Seleccione…</option>
+                    <option th:each="b : ${bebidas}" th:value="${b.id}" th:text="${b.nombre}"></option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label" for="idAcompanamiento">Acompañamiento</label>
+                <select class="form-select" th:field="*{idAcompanamiento}">
+                    <option value="">Seleccione…</option>
+                    <option th:each="a : ${acompanamientos}" th:value="${a.id}" th:text="${a.nombre}"></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 justify-content-end mt-4">
+            <a th:href="@{/productos}" class="btn btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Guardar</button>
+        </div>
+    </form>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+<script>
+    var categoria = document.getElementById("categoria");
+    function mostrarCampos() {
+        var esMenu = categoria.value === "MENU";
+        document.getElementById("bloque-menu").hidden = !esMenu;
+        document.getElementById("bloque-existencia").hidden = esMenu;
+    }
+    categoria.addEventListener("change", mostrarCampos);
+    mostrarCampos();
+</script>
+</body>
+</html>
