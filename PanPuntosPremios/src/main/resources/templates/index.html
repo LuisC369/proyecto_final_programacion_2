@@ -4,26 +4,97 @@
 <body>
 <nav th:replace="~{fragments/layout :: navbar('inicio')}"></nav>
 <main class="container pb-5">
-    <h1 class="h3 mb-4">Inicio</h1>
+    <h1 class="h3 mb-4">Resumen del día</h1>
     <div th:replace="~{fragments/layout :: alertas}"></div>
 
-    <div class="row g-3">
-        <div class="col-md-4">
-            <a class="card card-body text-decoration-none" th:href="@{/clientes}">
-                <span class="text-secondary"><i class="bi bi-people"></i> Clientes activos</span>
-                <span class="cifra" th:text="${clientesActivos}">0</span>
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="card card-body">
+                <small class="text-secondary"><i class="bi bi-cash-stack"></i> Ventas de hoy</small>
+                <span class="fs-4 fw-bold" th:text="${'Q ' + #numbers.formatDecimal(ventasHoy, 1, 'COMMA', 2, 'POINT')}">Q 0.00</span>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a class="card card-body text-decoration-none" th:href="@{/pedidos(estado='PENDIENTE')}">
+                <small class="text-secondary"><i class="bi bi-hourglass-split"></i> Por cobrar</small>
+                <span class="fs-4 fw-bold" th:text="${pendientes}">0</span>
             </a>
         </div>
-        <div class="col-md-8">
+        <div class="col-6 col-lg-3">
+            <a class="card card-body text-decoration-none" th:href="@{/pedidos(estado='PAGADO')}">
+                <small class="text-secondary"><i class="bi bi-bag-check"></i> Por entregar</small>
+                <span class="fs-4 fw-bold" th:text="${porEntregar}">0</span>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a class="card card-body text-decoration-none" th:href="@{/inventario}">
+                <small class="text-secondary"><i class="bi bi-exclamation-triangle"></i> Stock bajo</small>
+                <span class="fs-4 fw-bold text-danger" th:text="${#lists.size(bajoInventario)}">0</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-8">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-3"><i class="bi bi-bar-chart"></i> Ventas de los últimos 7 días</h2>
+                    <div class="d-flex align-items-center gap-2 mb-2" th:each="v : ${ventasSemana}">
+                        <span class="text-secondary text-nowrap" style="width: 4rem" th:text="${v.etiqueta}">lun</span>
+                        <div class="progress flex-grow-1">
+                            <div class="progress-bar bg-warning" th:style="|width: ${v.porcentaje}%|"></div>
+                        </div>
+                        <span class="text-end" style="width: 5rem" th:text="${'Q ' + #numbers.formatDecimal(v.monto, 1, 'COMMA', 0, 'POINT')}">Q 0</span>
+                    </div>
+                </div>
+            </div>
+
             <div class="card">
-                <div class="card-header fw-semibold"><i class="bi bi-star"></i> Clientes con más puntos</div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex justify-content-between align-items-center" th:each="c : ${topClientes}">
-                        <span th:text="${c.nombreCompleto}">Cliente</span>
-                        <span class="badge puntos" th:text="${c.puntos + ' pts'}">0 pts</span>
-                    </li>
-                    <li class="list-group-item text-secondary" th:if="${#lists.isEmpty(topClientes)}">Aún no hay clientes.</li>
-                </ul>
+                <div class="card-body">
+                    <h2 class="h5 mb-3"><i class="bi bi-receipt"></i> Últimos pedidos</h2>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead><tr><th>Pedido</th><th>Cliente</th><th>Estado</th><th class="text-end">Total</th></tr></thead>
+                            <tbody>
+                            <tr th:each="p : ${recientes}">
+                                <td><a th:href="@{/pedidos/{id}(id=${p.id})}" th:text="${'#' + p.id}">#1</a></td>
+                                <td th:text="${p.nombreCliente}">Cliente</td>
+                                <td><span class="badge" th:classappend="${'text-bg-' + p.estado.clase}" th:text="${p.estado.etiqueta}"></span></td>
+                                <td class="text-end" th:text="${'Q ' + #numbers.formatDecimal(p.total, 1, 'COMMA', 2, 'POINT')}">Q 0.00</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(recientes)}"><td colspan="4" class="text-secondary">Todavía no hay pedidos.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-3"><i class="bi bi-box-seam"></i> Por reponer</h2>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between px-0" th:each="prod : ${bajoInventario}">
+                            <span th:text="${prod.nombre}">Producto</span>
+                            <span class="badge" th:classappend="${prod.agotado} ? 'text-bg-danger' : 'text-bg-warning'"
+                                  th:text="${prod.agotado} ? 'Agotado' : ${prod.existencia} + ' u.'">0</span>
+                        </li>
+                        <li class="list-group-item px-0 text-secondary" th:if="${#lists.isEmpty(bajoInventario)}">Todo en orden.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h5 mb-3"><i class="bi bi-star"></i> Clientes con más puntos</h2>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between px-0" th:each="c : ${topClientes}">
+                            <a th:href="@{/clientes/{id}(id=${c.id})}" th:text="${c.nombreCompleto}">Cliente</a>
+                            <span class="badge puntos" th:text="${c.puntos + ' pts'}">0 pts</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>

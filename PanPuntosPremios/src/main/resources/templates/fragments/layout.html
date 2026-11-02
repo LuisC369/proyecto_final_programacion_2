@@ -28,10 +28,14 @@
                 <a class="d-flex align-items-center gap-2 text-white text-decoration-none fs-5 fw-semibold mb-4" th:href="@{/}">
                     <i class="bi bi-basket2-fill fs-3"></i> Pan, Puntos y Premios
                 </a>
+                <a class="btn btn-primary mb-4" th:href="@{/pedidos/nuevo}"><i class="bi bi-plus-lg"></i> Nuevo pedido</a>
                 <nav class="nav flex-column gap-1">
                     <a class="nav-link" th:classappend="${activo == 'inicio'} ? 'active'" th:href="@{/}"><i class="bi bi-house"></i> Inicio</a>
-                    <a class="nav-link" th:classappend="${activo == 'clientes'} ? 'active'" th:href="@{/clientes}"><i class="bi bi-people"></i> Clientes</a>
+                    <a class="nav-link" th:classappend="${activo == 'pedidos'} ? 'active'" th:href="@{/pedidos}"><i class="bi bi-receipt"></i> Pedidos</a>
                     <a class="nav-link" th:classappend="${activo == 'productos'} ? 'active'" th:href="@{/productos}"><i class="bi bi-basket2"></i> Productos</a>
+                    <a class="nav-link" th:classappend="${activo == 'inventario'} ? 'active'" th:href="@{/inventario}"><i class="bi bi-box-seam"></i> Inventario</a>
+                    <a class="nav-link" th:classappend="${activo == 'clientes'} ? 'active'" th:href="@{/clientes}"><i class="bi bi-people"></i> Clientes</a>
+                    <a class="nav-link" th:classappend="${activo == 'recompensas'} ? 'active'" th:href="@{/recompensas}"><i class="bi bi-gift"></i> Recompensas</a>
                     <a class="nav-link" th:classappend="${activo == 'reportes'} ? 'active'" th:href="@{/reportes}"><i class="bi bi-file-earmark-pdf"></i> Reportes</a>
                 </nav>
                 <small class="text-white-50 mt-auto pt-4">Programación II · UMG</small>

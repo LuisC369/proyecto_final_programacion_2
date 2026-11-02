@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${cliente.nombreCompleto})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('clientes')}"></nav>
+<main class="container pb-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <h1 class="h3 mb-0" th:text="${cliente.nombreCompleto}">Cliente</h1>
+        <div class="d-flex gap-2">
+            <a th:href="@{/clientes/{id}/editar(id=${cliente.id})}" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i> Editar</a>
+            <a th:if="${cliente.activo}" th:href="@{/pedidos/nuevo(cliente=${cliente.id})}" class="btn btn-primary"><i class="bi bi-cart-plus"></i> Nuevo pedido</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <div class="row g-3">
+        <div class="col-lg-4">
+            <div class="card card-body text-center">
+                <small class="text-secondary">Saldo de puntos</small>
+                <div class="cifra" th:text="${cliente.puntos}">0</div>
+                <div class="mb-3">
+                    <span class="badge puntos" th:text="${'Nivel ' + cliente.nivel}">Nivel</span>
+                    <span class="badge" th:classappend="${cliente.activo} ? 'text-bg-success' : 'text-bg-secondary'"
+                          th:text="${cliente.activo} ? 'Activo' : 'Desactivado'">Activo</span>
+                </div>
+                <ul class="list-unstyled text-start small mb-3">
+                    <li><strong>Identificador:</strong> <span th:text="${cliente.identificador}"></span></li>
+                    <li th:if="${!#strings.isEmpty(cliente.telefono)}"><strong>Teléfono:</strong> <span th:text="${cliente.telefono}"></span></li>
+                    <li th:if="${!#strings.isEmpty(cliente.email)}"><strong>Correo:</strong> <span th:text="${cliente.email}"></span></li>
+                </ul>
+                <div class="d-flex gap-2 justify-content-center">
+                    <form th:action="@{/clientes/{id}/estado(id=${cliente.id})}" method="post"
+                          th:attr="data-confirmar=${cliente.activo} ? '¿Desactivar a este cliente?' : '¿Activar a este cliente?'">
+                        <input type="hidden" name="activo" th:value="${!cliente.activo}">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary" th:text="${cliente.activo} ? 'Desactivar' : 'Activar'"></button>
+                    </form>
+                    <form th:if="${#lists.isEmpty(pedidos)}" th:action="@{/clientes/{id}/eliminar(id=${cliente.id})}" method="post"
+                          data-confirmar="¿Eliminar definitivamente a este cliente?">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card card-body mb-3">
+                <h2 class="h5 mb-3">Canjear recompensas</h2>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0"
+                        th:each="r : ${recompensas}" th:if="${r.activo}">
+                        <div>
+                            <span class="fw-semibold" th:text="${r.nombre}">Recompensa</span>
+                            <small class="text-secondary d-block" th:text="${r.producto.nombre + ' · ' + r.puntosRequeridos + ' pts'}"></small>
+                        </div>
+                        <form th:if="${r.puedeCanjear(cliente)}" th:action="@{/recompensas/canjear}" method="post"
+                              th:attr="data-confirmar='¿Canjear ' + ${r.nombre} + ' por ' + ${r.puntosRequeridos} + ' puntos?'">
+                            <input type="hidden" name="idCliente" th:value="${cliente.id}">
+                            <input type="hidden" name="idRecompensa" th:value="${r.id}">
+                            <button type="submit" class="btn btn-sm btn-primary"><i class="bi bi-gift"></i> Canjear</button>
+                        </form>
+                        <small th:unless="${r.puedeCanjear(cliente)}" class="text-secondary text-end" th:text="${r.motivoRechazo(cliente)}"></small>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card card-body mb-3">
+                <h2 class="h5 mb-3">Pedidos</h2>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead><tr><th>Pedido</th><th>Fecha</th><th>Estado</th><th>Puntos</th><th class="text-end">Total</th></tr></thead>
+                        <tbody>
+                        <tr th:each="p : ${pedidos}">
+                            <td><a th:href="@{/pedidos/{id}(id=${p.id})}" th:text="${'#' + p.id}">#1</a></td>
+                            <td th:text="${#temporals.format(p.fecha, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td><span class="badge" th:classappend="${'text-bg-' + p.estado.clase}" th:text="${p.estado.etiqueta}"></span></td>
+                            <td th:text="${p.puntosGenerados > 0} ? ${'+' + p.puntosGenerados} : '—'"></td>
+                            <td class="text-end" th:text="${'Q ' + #numbers.formatDecimal(p.total, 1, 'COMMA', 2, 'POINT')}"></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(pedidos)}"><td colspan="5" class="text-secondary">Aún no tiene pedidos.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card card-body">
+                <h2 class="h5 mb-3">Movimientos de puntos</h2>
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead><tr><th>Fecha</th><th>Detalle</th><th class="text-end">Puntos</th></tr></thead>
+                        <tbody>
+                        <tr th:each="m : ${movimientos}">
+                            <td class="text-nowrap" th:text="${#temporals.format(m.fecha, 'dd/MM/yyyy')}"></td>
+                            <td class="small" th:text="${m.descripcion}"></td>
+                            <td class="text-end fw-bold" th:classappend="${m.puntos > 0} ? 'text-success' : 'text-danger'" th:text="${m.puntosConSigno}">+2</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(movimientos)}"><td colspan="3" class="text-secondary">Sin movimientos.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

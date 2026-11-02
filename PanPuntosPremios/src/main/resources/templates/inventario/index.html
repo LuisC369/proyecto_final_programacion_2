@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Inventario')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('inventario')}"></nav>
+<main class="container pb-5">
+    <h1 class="h3 mb-4">Inventario</h1>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <div class="row g-3 mb-3">
+        <div class="col-lg-5">
+            <form class="card card-body h-100" th:action="@{/inventario/abastecer}" method="post">
+                <h2 class="h5 mb-3">Ingresar unidades</h2>
+                <div class="mb-3">
+                    <label class="form-label" for="idProducto">Producto</label>
+                    <select class="form-select" id="idProducto" name="idProducto" required>
+                        <option value="">Seleccione…</option>
+                        <option th:each="p : ${productos}" th:value="${p.id}"
+                                th:selected="${productoSeleccionado != null && productoSeleccionado == p.id}"
+                                th:text="${p.codigo + ' · ' + p.nombre + ' (' + p.existencia + ')'}">Producto</option>
+                    </select>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-5">
+                        <label class="form-label" for="cantidad">Cantidad</label>
+                        <input type="number" class="form-control" id="cantidad" name="cantidad" min="1" step="1" required>
+                    </div>
+                    <div class="col-7">
+                        <label class="form-label" for="referencia">Referencia</label>
+                        <input class="form-control" id="referencia" name="referencia" maxlength="100" placeholder="Proveedor, factura…">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-box-arrow-in-down"></i> Registrar entrada</button>
+            </form>
+        </div>
+        <div class="col-lg-7">
+            <div class="card card-body h-100">
+                <div class="d-flex justify-content-between mb-3">
+                    <h2 class="h5 mb-0">Agotados o con 5 unidades o menos</h2>
+                    <a th:href="@{/reportes/inventario}" target="_blank"><i class="bi bi-file-earmark-pdf"></i> PDF</a>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between px-0" th:each="p : ${bajoInventario}">
+                        <span th:text="${p.codigo + ' · ' + p.nombre}">Producto</span>
+                        <span class="badge" th:classappend="${p.agotado} ? 'text-bg-danger' : 'text-bg-warning'"
+                              th:text="${p.agotado} ? 'Agotado' : ${p.existencia} + ' u.'">0</span>
+                    </li>
+                    <li class="list-group-item px-0 text-secondary" th:if="${#lists.isEmpty(bajoInventario)}">Ningún producto requiere reabastecimiento.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-body">
+        <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
+            <h2 class="h5 mb-0">Movimientos</h2>
+            <form th:action="@{/inventario}" method="get">
+                <select class="form-select form-select-sm" name="producto" onchange="this.form.submit()">
+                    <option value="">Todos los productos</option>
+                    <option th:each="p : ${productos}" th:value="${p.id}"
+                            th:selected="${productoSeleccionado != null && productoSeleccionado == p.id}"
+                            th:text="${p.codigo + ' · ' + p.nombre}"></option>
+                </select>
+            </form>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead><tr><th>Fecha</th><th>Producto</th><th>Tipo</th><th class="text-end">Cantidad</th><th>Referencia</th></tr></thead>
+                <tbody>
+                <tr th:each="m : ${movimientos}">
+                    <td class="text-nowrap" th:text="${#temporals.format(m.fecha, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td th:text="${m.producto.nombre}"></td>
+                    <td><span class="badge" th:classappend="${'text-bg-' + m.tipo.clase}" th:text="${m.tipo.etiqueta}"></span></td>
+                    <td class="text-end fw-bold" th:classappend="${m.tipo.suma} ? 'text-success' : 'text-danger'" th:text="${m.cantidadConSigno}"></td>
+                    <td class="small text-secondary" th:text="${m.referencia}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(movimientos)}"><td colspan="5" class="text-secondary">No hay movimientos.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

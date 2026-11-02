@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${'Comprobante #' + pedido.id})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('pedidos')}"></nav>
+<main class="container pb-5" style="max-width: 480px">
+    <div class="no-imprimir">
+        <div th:replace="~{fragments/layout :: alertas}"></div>
+        <div class="d-flex justify-content-center gap-2 mb-3">
+            <a th:href="@{/pedidos/{id}(id=${pedido.id})}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Ver pedido</a>
+            <button type="button" class="btn btn-outline-secondary" onclick="window.print()"><i class="bi bi-printer"></i> Imprimir</button>
+            <a th:href="@{/pedidos/nuevo}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Siguiente pedido</a>
+        </div>
+    </div>
+
+    <div class="card card-body">
+        <div class="text-center mb-3">
+            <h2 class="h5 mb-0">Pan, Puntos y Premios</h2>
+            <small class="text-secondary" th:text="${'Pedido #' + pedido.id + ' · ' + #temporals.format(pedido.pago.fecha, 'dd/MM/yyyy HH:mm')}"></small>
+        </div>
+        <p class="mb-2"><strong>Cliente:</strong> <span th:text="${pedido.nombreCliente}"></span></p>
+        <table class="table table-sm mb-2">
+            <tr th:each="d : ${pedido.detalles}">
+                <td th:text="${d.cantidad + ' × ' + d.producto.nombre}"></td>
+                <td class="text-end" th:text="${'Q ' + #numbers.formatDecimal(d.subtotal, 1, 'COMMA', 2, 'POINT')}"></td>
+            </tr>
+            <tr class="fw-bold"><td>Total</td>
+                <td class="text-end" th:text="${'Q ' + #numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}"></td></tr>
+            <tr><td>Pagado con</td><td class="text-end" th:text="${pedido.pago.metodo.etiqueta}"></td></tr>
+            <th:block th:if="${pedido.pago.metodo.name() == 'EFECTIVO'}">
+                <tr><td>Recibido</td><td class="text-end" th:text="${'Q ' + #numbers.formatDecimal(pedido.pago.montoRecibido, 1, 'COMMA', 2, 'POINT')}"></td></tr>
+                <tr><td>Cambio</td><td class="text-end" th:text="${'Q ' + #numbers.formatDecimal(pedido.pago.cambio, 1, 'COMMA', 2, 'POINT')}"></td></tr>
+            </th:block>
+            <th:block th:if="${pedido.pago.metodo.name() == 'TARJETA'}">
+                <tr><td>Tarjeta</td><td class="text-end" th:text="${'**** ' + pedido.pago.ultimosDigitos}"></td></tr>
+                <tr><td>Autorización</td><td class="text-end" th:text="${pedido.pago.referencia}"></td></tr>
+            </th:block>
+        </table>
+        <div class="alert alert-warning text-center mb-0" th:if="${pedido.cliente != null}">
+            Puntos ganados: <strong th:text="${'+' + pedido.puntosGenerados}">+0</strong><br>
+            <small th:text="${'Saldo actual: ' + pedido.cliente.puntos + ' pts'}"></small>
+        </div>
+        <p class="text-center small text-secondary mt-3 mb-0">¡Gracias por su compra!</p>
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

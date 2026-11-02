@@ -14,14 +14,14 @@
         <div class="card-body">
             <form class="d-flex gap-2 mb-3" th:action="@{/clientes}" method="get">
                 <input type="search" name="q" class="form-control" th:value="${q}" placeholder="Buscar por nombre o identificador">
-                <button type="submit" class="btn btn-outline-secondary"><i class="bi bi-search"></i> Buscar</button>
+                <button type="submit" class="btn btn-outline-secondary" aria-label="Buscar"><i class="bi bi-search"></i></button>
             </form>
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead><tr><th>Cliente</th><th>Identificador</th><th>Teléfono</th><th>Puntos</th><th>Estado</th><th></th></tr></thead>
                     <tbody>
                     <tr th:each="c : ${clientes}">
-                        <td th:text="${c.nombreCompleto}">Nombre</td>
+                        <td><a th:href="@{/clientes/{id}(id=${c.id})}" th:text="${c.nombreCompleto}">Nombre</a></td>
                         <td th:text="${c.identificador}">123</td>
                         <td th:text="${c.telefono}"></td>
                         <td><span class="badge puntos" th:text="${c.puntos + ' pts'}">0 pts</span></td>
@@ -29,15 +29,7 @@
                                   th:text="${c.activo} ? 'Activo' : 'Inactivo'">Activo</span></td>
                         <td class="text-end text-nowrap">
                             <a th:href="@{/clientes/{id}/editar(id=${c.id})}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i> Editar</a>
-                            <form class="d-inline" th:action="@{/clientes/{id}/estado(id=${c.id})}" method="post">
-                                <input type="hidden" name="activo" th:value="${!c.activo}">
-                                <button type="submit" class="btn btn-sm btn-outline-secondary"
-                                        th:text="${c.activo} ? 'Desactivar' : 'Activar'">Desactivar</button>
-                            </form>
-                            <form class="d-inline" th:action="@{/clientes/{id}/eliminar(id=${c.id})}" method="post"
-                                  data-confirmar="¿Eliminar este cliente?">
-                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                            </form>
+                            <a th:if="${c.activo}" th:href="@{/pedidos/nuevo(cliente=${c.id})}" class="btn btn-sm btn-primary"><i class="bi bi-cart-plus"></i> Pedido</a>
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(clientes)}"><td colspan="6" class="text-secondary">No se encontraron clientes.</td></tr>

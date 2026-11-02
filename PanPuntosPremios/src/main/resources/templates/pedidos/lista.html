@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Pedidos')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('pedidos')}"></nav>
+<main class="container pb-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <h1 class="h3 mb-0">Pedidos</h1>
+        <a th:href="@{/pedidos/nuevo}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Nuevo pedido</a>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <ul class="nav nav-pills mb-3">
+        <li class="nav-item"><a class="nav-link" th:classappend="${estadoActual == null} ? 'active'" th:href="@{/pedidos}">Todos</a></li>
+        <li class="nav-item" th:each="e : ${estados}">
+            <a class="nav-link" th:classappend="${estadoActual == e} ? 'active'" th:href="@{/pedidos(estado=${e})}"
+               th:text="${e.etiqueta + ' (' + (conteo.get(e) != null ? conteo.get(e) : 0) + ')'}">Estado</a>
+        </li>
+    </ul>
+
+    <div class="card card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead><tr><th>Pedido</th><th>Cliente</th><th>Fecha</th><th>Estado</th><th>Puntos</th><th class="text-end">Total</th><th></th></tr></thead>
+                <tbody>
+                <tr th:each="p : ${pedidos}">
+                    <td><a th:href="@{/pedidos/{id}(id=${p.id})}" th:text="${'#' + p.id}">#1</a></td>
+                    <td th:text="${p.nombreCliente}"></td>
+                    <td class="text-nowrap" th:text="${#temporals.format(p.fecha, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td><span class="badge" th:classappend="${'text-bg-' + p.estado.clase}" th:text="${p.estado.etiqueta}"></span></td>
+                    <td th:text="${p.puntosGenerados > 0} ? ${'+' + p.puntosGenerados} : '—'"></td>
+                    <td class="text-end" th:text="${'Q ' + #numbers.formatDecimal(p.total, 1, 'COMMA', 2, 'POINT')}"></td>
+                    <td class="text-end text-nowrap">
+                        <a th:if="${p.pendiente}" th:href="@{/pedidos/{id}/cobrar(id=${p.id})}" class="btn btn-sm btn-primary"><i class="bi bi-cash-coin"></i> Cobrar</a>
+                        <form th:if="${p.pagado}" class="d-inline" th:action="@{/pedidos/{id}/entregar(id=${p.id})}" method="post">
+                            <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-bag-check"></i> Entregar</button>
+                        </form>
+                        <a th:href="@{/pedidos/{id}(id=${p.id})}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye"></i> Ver</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(pedidos)}"><td colspan="7" class="text-secondary">No hay pedidos en este estado.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

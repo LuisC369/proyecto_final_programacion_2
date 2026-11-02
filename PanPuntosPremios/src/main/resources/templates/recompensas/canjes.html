@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Historial de canjes')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('recompensas')}"></nav>
+<main class="container pb-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <h1 class="h3 mb-0">Historial de canjes</h1>
+        <a th:href="@{/reportes/canjes}" target="_blank" class="btn btn-outline-secondary"><i class="bi bi-file-earmark-pdf"></i> PDF del mes</a>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <div class="card card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead><tr><th>#</th><th>Fecha</th><th>Cliente</th><th>Recompensa</th><th>Producto</th><th class="text-end">Puntos</th></tr></thead>
+                <tbody>
+                <tr th:each="c : ${canjes}">
+                    <td th:text="${c.id}"></td>
+                    <td class="text-nowrap" th:text="${#temporals.format(c.fecha, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td><a th:href="@{/clientes/{id}(id=${c.cliente.id})}" th:text="${c.cliente.nombreCompleto}"></a></td>
+                    <td th:text="${c.recompensa.nombre}"></td>
+                    <td th:text="${c.recompensa.producto.nombre}"></td>
+                    <td class="text-end fw-bold text-danger" th:text="${'-' + c.puntosUsados}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(canjes)}"><td colspan="6" class="text-secondary">Todavía no hay canjes.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

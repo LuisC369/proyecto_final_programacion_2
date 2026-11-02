@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${'Cobrar pedido #' + pedido.id})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('pedidos')}"></nav>
+<main class="container pb-5" style="max-width: 900px">
+    <h1 class="h3 mb-1" th:text="${'Cobrar pedido #' + pedido.id}">Cobrar pedido</h1>
+    <p class="mb-4">
+        <span th:text="${pedido.nombreCliente}"></span> ·
+        <strong th:text="${'Total: Q ' + #numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}"></strong>
+        <span th:if="${pedido.cliente != null and pedido.calcularPuntos() > 0}" class="badge puntos"
+              th:text="${'+' + pedido.calcularPuntos() + ' pts'}"></span>
+    </p>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <form class="card card-body h-100" th:action="@{/pedidos/{id}/cobrar(id=${pedido.id})}" method="post">
+                <h2 class="h5"><i class="bi bi-cash-coin"></i> Efectivo</h2>
+                <input type="hidden" name="metodo" value="EFECTIVO">
+                <label class="form-label" for="montoRecibido">Monto recibido (Q)</label>
+                <input type="number" class="form-control mb-3" id="montoRecibido" name="montoRecibido" min="0" step="0.01" required>
+                <button type="submit" class="btn btn-primary mt-auto"><i class="bi bi-cash-coin"></i> Cobrar en efectivo</button>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <form class="card card-body h-100" th:action="@{/pedidos/{id}/cobrar(id=${pedido.id})}" method="post">
+                <h2 class="h5"><i class="bi bi-credit-card"></i> Tarjeta</h2>
+                <input type="hidden" name="metodo" value="TARJETA">
+                <label class="form-label" for="numeroTarjeta">Número de tarjeta (16 dígitos)</label>
+                <input class="form-control mb-2" id="numeroTarjeta" name="numeroTarjeta" maxlength="19" required autocomplete="off">
+                <p class="small text-secondary">Prueba: 4111 1111 1111 1111 se aprueba; una que termine en 0000 se rechaza.</p>
+                <button type="submit" class="btn btn-primary mt-auto"><i class="bi bi-credit-card"></i> Cobrar con tarjeta</button>
+            </form>
+        </div>
+    </div>
+    <p class="small text-secondary mt-3">Al aprobar el pago se descuenta el inventario y se suman los puntos. Si se rechaza, no se registra nada.</p>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

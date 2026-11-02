@@ -21,8 +21,18 @@
         <p class="small text-secondary">Las fechas aplican a los reportes marcados con <i class="bi bi-calendar"></i>.</p>
 
         <div class="list-group">
+            <button type="submit" class="list-group-item list-group-item-action" th:formaction="@{/reportes/ventas}">
+                <i class="bi bi-calendar text-secondary"></i> Ventas por período</button>
+            <button type="submit" class="list-group-item list-group-item-action" th:formaction="@{/reportes/mas-vendidos}">
+                <i class="bi bi-calendar text-secondary"></i> Productos más vendidos</button>
+            <button type="submit" class="list-group-item list-group-item-action" th:formaction="@{/reportes/inventario}">
+                Productos agotados o con existencia ≤ 5</button>
             <button type="submit" class="list-group-item list-group-item-action" th:formaction="@{/reportes/puntos}">
                 Puntos acumulados por cliente</button>
+            <button type="submit" class="list-group-item list-group-item-action" th:formaction="@{/reportes/canjes}">
+                <i class="bi bi-calendar text-secondary"></i> Historial de canjes</button>
+            <button type="submit" class="list-group-item list-group-item-action" th:formaction="@{/reportes/menus}">
+                <i class="bi bi-calendar text-secondary"></i> Ventas de menús completos</button>
         </div>
     </form>
 </main>

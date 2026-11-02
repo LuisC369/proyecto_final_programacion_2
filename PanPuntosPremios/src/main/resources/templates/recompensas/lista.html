@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Recompensas')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('recompensas')}"></nav>
+<main class="container pb-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <h1 class="h3 mb-0">Recompensas</h1>
+        <div class="d-flex gap-2">
+            <a th:href="@{/recompensas/canjes}" class="btn btn-outline-secondary"><i class="bi bi-clock-history"></i> Historial de canjes</a>
+            <a th:href="@{/recompensas/nueva}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Nueva recompensa</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <div class="alert alert-warning">
+        <strong>Puntos = (Sándwiches × 2) + (Menús × 8).</strong>
+        Bebidas y acompañamientos sueltos no dan puntos. Para canjear, abra el perfil del cliente.
+    </div>
+
+    <div class="row g-3">
+        <div class="col-sm-6 col-lg-3" th:each="r : ${recompensas}">
+            <div class="card card-body text-center h-100" th:classappend="${!r.activo} ? 'opacity-50'">
+                <h2 class="h6 mb-1" th:text="${r.nombre}">Recompensa</h2>
+                <small class="text-secondary" th:text="${r.producto.nombre}">Producto</small>
+                <div class="cifra" th:text="${r.puntosRequeridos}">10</div>
+                <small class="text-secondary mb-3">puntos</small>
+                <div class="d-flex gap-2 justify-content-center mt-auto">
+                    <a th:href="@{/recompensas/{id}/editar(id=${r.id})}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i> Editar</a>
+                    <form th:action="@{/recompensas/{id}/estado(id=${r.id})}" method="post">
+                        <input type="hidden" name="activo" th:value="${!r.activo}">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary" th:text="${r.activo} ? 'Desactivar' : 'Activar'"></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

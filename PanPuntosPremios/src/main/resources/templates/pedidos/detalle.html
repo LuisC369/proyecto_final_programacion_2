@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${'Pedido #' + pedido.id})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('pedidos')}"></nav>
+<main class="container pb-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <h1 class="h3 mb-0">
+            <span th:text="${'Pedido #' + pedido.id}">Pedido</span>
+            <span class="badge fs-6 align-middle" th:classappend="${'text-bg-' + pedido.estado.clase}" th:text="${pedido.estado.etiqueta}"></span>
+        </h1>
+        <div class="d-flex gap-2">
+            <form th:if="${pedido.pendiente}" th:action="@{/pedidos/{id}/anular(id=${pedido.id})}" method="post"
+                  data-confirmar="¿Anular este pedido?">
+                <button type="submit" class="btn btn-outline-danger"><i class="bi bi-x-circle"></i> Anular</button>
+            </form>
+            <a th:if="${pedido.pendiente}" th:href="@{/pedidos/{id}/cobrar(id=${pedido.id})}" class="btn btn-primary"><i class="bi bi-cash-coin"></i> Cobrar</a>
+            <form th:if="${pedido.pagado}" th:action="@{/pedidos/{id}/entregar(id=${pedido.id})}" method="post">
+                <button type="submit" class="btn btn-success"><i class="bi bi-bag-check"></i> Marcar entregado</button>
+            </form>
+            <a th:if="${pedido.cobrado}" th:href="@{/pedidos/{id}/comprobante(id=${pedido.id})}" class="btn btn-outline-secondary"><i class="bi bi-receipt"></i> Comprobante</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <div class="row g-3">
+        <div class="col-lg-8">
+            <div class="card card-body">
+                <p class="text-secondary small" th:text="${#temporals.format(pedido.fecha, 'dd/MM/yyyy HH:mm')}"></p>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead><tr><th>Producto</th><th class="text-end">Precio</th><th class="text-center">Cant.</th><th class="text-end">Subtotal</th></tr></thead>
+                        <tbody>
+                        <tr th:each="d : ${pedido.detalles}">
+                            <td>
+                                <span th:text="${d.producto.nombre}"></span>
+                                <small class="text-secondary d-block" th:if="${d.producto.menu}" th:text="${d.producto.descripcionComponentes}"></small>
+                            </td>
+                            <td class="text-end" th:text="${'Q ' + #numbers.formatDecimal(d.precioUnitario, 1, 'COMMA', 2, 'POINT')}"></td>
+                            <td class="text-center" th:text="${d.cantidad}"></td>
+                            <td class="text-end" th:text="${'Q ' + #numbers.formatDecimal(d.subtotal, 1, 'COMMA', 2, 'POINT')}"></td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr class="fw-bold"><td colspan="3">Total</td>
+                            <td class="text-end" th:text="${'Q ' + #numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}"></td></tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card card-body mb-3">
+                <h2 class="h5">Cliente</h2>
+                <a th:if="${pedido.cliente != null}" th:href="@{/clientes/{id}(id=${pedido.cliente.id})}"
+                   th:text="${pedido.cliente.nombreCompleto}"></a>
+                <span th:if="${pedido.cliente == null}" class="text-secondary">Consumidor final (no acumula puntos)</span>
+                <div class="alert alert-warning small mt-3 mb-0" th:if="${pedido.cliente != null}">
+                    <span th:if="${pedido.cobrado}" th:text="${'Puntos acreditados: ' + pedido.puntosGenerados}"></span>
+                    <span th:if="${pedido.pendiente}"
+                          th:text="${'Al pagarse ganará ' + pedido.calcularPuntos() + ' pts (' + pedido.cantidadSandwiches + ' × 2 + ' + pedido.cantidadMenus + ' × 8)'}"></span>
+                    <span th:if="${pedido.estado.name() == 'ANULADO'}">Pedido anulado: no generó puntos.</span>
+                </div>
+            </div>
+            <div class="card card-body" th:if="${pedido.pago != null}">
+                <h2 class="h5">Pago</h2>
+                <ul class="list-unstyled small mb-0">
+                    <li><strong>Método:</strong> <span th:text="${pedido.pago.metodo.etiqueta}"></span></li>
+                    <li><strong>Detalle:</strong> <span th:text="${pedido.pago.detalle}"></span></li>
+                    <li><strong>Fecha:</strong> <span th:text="${#temporals.format(pedido.pago.fecha, 'dd/MM/yyyy HH:mm')}"></span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
