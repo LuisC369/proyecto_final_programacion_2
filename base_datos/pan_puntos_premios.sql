@@ -157,8 +157,8 @@ INSERT INTO pagos (id_pago, id_pedido, metodo, monto, monto_recibido, cambio, re
 (2, 2, 'TARJETA',  55.00, NULL,  NULL, 'AUT-11592038', '4242', '2026-10-22 19:12:00');
 
 INSERT INTO movimientos_puntos (id_cliente, tipo, puntos, fecha, id_pedido, id_canje, descripcion) VALUES
-(1, 'ACUMULACION', 2, '2026-10-20 13:07:00', 1, NULL, 'Pedido #1: 1 sándwiches x 2 + 0 memus x 8'),
-(1, 'ACUMULACION', 8, '2026-10-22 19:12:00', 2, NULL, 'Pedido #2: 0 sándwiches x 2 + 1 memus x 8');
+(1, 'ACUMULACION', 2, '2026-10-20 13:07:00', 1, NULL, 'Pedido #1: 1 sándwiches x 2 + 0 menús x 8'),
+(1, 'ACUMULACION', 8, '2026-10-22 19:12:00', 2, NULL, 'Pedido #2: 0 sándwiches x 2 + 1 menús x 8');
 
 INSERT INTO movimientos_inventario (id_producto, tipo, cantidad, fecha, referencia) VALUES
 (1, 'ENTRADA', 20, '2026-10-15 08:00:00', 'Existencia inicial'),
